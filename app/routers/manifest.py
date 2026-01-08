@@ -14,7 +14,7 @@ async def get_manifest(request: Request):
         "catalogs": [
             {
                 "id": "ygg_src",
-                "types": ["movie", "series"],
+                "type": "movie",
                 "extra": [{"name": "search", "isRequired": "true"}],
                 "name": "Resultados achados pelo Server",
             }
