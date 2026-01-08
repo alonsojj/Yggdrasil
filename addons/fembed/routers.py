@@ -121,7 +121,7 @@ async def crypt_handler(context: HttpCrawlingContext) -> None:
             raise RuntimeError("Label url not founded")
         correlation_id = context.request.unique_key.split(":")[0]
         fembed_storage[correlation_id].set_result(
-            {"url": final_url, "headers": stream_url}
+            {"url": final_url, "headers": final_url}
         )
     except Exception as e:
         print(e)
