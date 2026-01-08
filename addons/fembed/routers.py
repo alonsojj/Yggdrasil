@@ -95,15 +95,15 @@ async def mirror_handler(context: HttpCrawlingContext) -> None:
 async def crypt_handler(context: HttpCrawlingContext) -> None:
     response_bytes = await context.http_response.read()
     response = response_bytes.decode()
-    selector = Selector(text=response)
+    data = json.loads(response)
     try:
-        playback = selector.jmespath("playback")
+        playback = data.get("playback", {})
+
         payload = playback.get("payload")
         iv = playback.get("iv")
-        key_parts = playback.getall("key_parts")
-        legacy = playback.get("decrypt_keys.legacy_fallback")
-        print(response)
-        if not all[payload, iv, key_parts, legacy]:
+        key_parts = playback.get("key_parts", [])
+        legacy = playback.get("decrypt_keys", {}).get("legacy_fallback")
+        if not all([payload, iv, key_parts, legacy]):
             raise ValueError("Unexpected reposnse")
         decrypted_str = decrypt_AEG(
             payload=payload, iv=iv, key_parts=key_parts, legacy=legacy

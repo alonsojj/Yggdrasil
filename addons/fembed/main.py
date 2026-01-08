@@ -47,6 +47,8 @@ class Fembed(YggScraper):
                     headers=self.STREAMING_HEADERS,
                 )
             ]
+        else:
+            return []
 
     async def search(query):
         pass
