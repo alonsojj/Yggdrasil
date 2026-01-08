@@ -3,9 +3,10 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
+    secret_key: str
+    tmdb_key: str
     proxy_url: str | None = None
     addon_path: str | None = None
-    tmdb_key: str
     model_config = SettingsConfigDict(env_file=".env")
 
 
