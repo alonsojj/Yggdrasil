@@ -5,6 +5,8 @@ from crawlee.storage_clients import MemoryStorageClient
 from crawlee.router import Router
 
 storage = MemoryStorageClient()
+
+
 httpx_router = Router[HttpCrawlingContext]()
 curl_router = Router[HttpCrawlingContext]()
 httpxCrawl = HttpCrawler(
@@ -12,6 +14,8 @@ httpxCrawl = HttpCrawler(
     storage_client=storage,
     request_handler=httpx_router,
     keep_alive=True,
+    max_request_retries=1,
+    use_session_pool=False,
 )
 curlCrawnl = HttpCrawler(
     http_client=CurlImpersonateHttpClient(),
