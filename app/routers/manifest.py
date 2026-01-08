@@ -19,5 +19,5 @@ async def get_manifest(request: Request):
                 "name": "Resultados achados pelo Server",
             }
         ],
-        "idPrefixes": ["tt", "ygg_src"],
+        "idPrefixes": ["tt", "ygg_src", "kitsu"],
     }

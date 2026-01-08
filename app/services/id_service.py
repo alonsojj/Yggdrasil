@@ -31,4 +31,13 @@ async def get_imdb_info(content: ParsedId) -> ParsedContent:
     return content_info
 
 
-PREFIX_HANDLER = {"tt": get_imdb_info}
+async def get_kitsu_info(content: ParsedId) -> ParsedContent:
+    BASE_URL = "https://kitsu.io/api/edge"
+    final_url = f"{BASE_URL}/anime/{content.id}"
+    response = await client.get(final_url)
+    data = response.json()["data"]["attributes"]
+    content_info = ParsedContent(id=content, name=data["canonicalTitle"])
+    return content_info
+
+
+PREFIX_HANDLER = {"tt": get_imdb_info, "kitsu": get_kitsu_info}

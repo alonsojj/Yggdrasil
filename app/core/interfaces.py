@@ -23,6 +23,8 @@ class SearchResult(BaseModel):
 
 
 class YggScraper(ABC):
+    idPrefixies: list[str]
+
     @abstractmethod
     async def search(query: str) -> List[SearchResult]:
         pass

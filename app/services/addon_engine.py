@@ -56,9 +56,10 @@ class AddonEngine:
         else:
             self.cached_results[content.id.raw_id] = {}
         for addon in self.loaded_addons:
-            tasks.append(
-                asyncio.create_task(addon.get_streams(content, correlation_id))
-            )
+            if content.id.prefix in addon.idPrefixies:
+                tasks.append(
+                    asyncio.create_task(addon.get_streams(content, correlation_id))
+                )
         results = await asyncio.gather(*tasks)
         if results:
             for result in results:
