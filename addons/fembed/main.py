@@ -42,8 +42,10 @@ class Fembed(YggScraper):
             del fembed_storage[correlation_id]
             return [
                 StreamResult(
+                    stream_id=f"fembed:{content.id.raw_id}",
+                    name="Fembeded",
                     title=f"Fembed/Goflix - {content.name}",
-                    url=result["url"],
+                    scraped_url=result["url"],
                     headers=self.STREAMING_HEADERS,
                 )
             ]
