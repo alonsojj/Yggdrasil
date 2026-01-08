@@ -6,6 +6,7 @@ from .routers import manifest, streams, proxy
 from app.services.addon_engine import AddonEngine
 from app.core.config import get_settings
 from app.core.engines import httpxCrawl
+from asgi_correlation_id import CorrelationIdMiddleware
 import asyncio
 
 
@@ -30,6 +31,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(CorrelationIdMiddleware)
 app.include_router(manifest.router)
 app.include_router(streams.router)
 app.include_router(proxy.router)

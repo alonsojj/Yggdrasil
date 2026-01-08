@@ -31,16 +31,20 @@ class AddonEngine:
                             )  # ignore the import of base class
                         ):
                             print(obj)
-                            self.loaded_addons.append(obj)
+                            self.loaded_addons.append(obj())
 
     async def load(self, addon_directory: str):
         pass
 
-    async def get_streams(self, content: ParsedContent) -> list[StreamResult]:
+    async def get_streams(
+        self, content: ParsedContent, correlation_id: str
+    ) -> list[StreamResult]:
         tasks = []
         all_streams = []
         for addon in self.loaded_addons:
-            tasks.append(asyncio.create_task(addon.get_streams(content)))
+            tasks.append(
+                asyncio.create_task(addon.get_streams(content, correlation_id))
+            )
         results = await asyncio.gather(*tasks)
         if results:
             for result in results:
