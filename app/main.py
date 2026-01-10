@@ -8,11 +8,14 @@ from app.core.config import get_settings
 from app.core.engines import httpxCrawl
 from asgi_correlation_id import CorrelationIdMiddleware
 import asyncio
+import uvicorn
+
+
+settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    settings = get_settings()
     addon_path = settings.addon_path
     addon_engine = AddonEngine(addon_path=addon_path)
     asyncio.create_task(httpxCrawl.run([]))
@@ -35,3 +38,15 @@ app.add_middleware(CorrelationIdMiddleware)
 app.include_router(manifest.router)
 app.include_router(streams.router)
 app.include_router(proxy.router)
+
+if __name__ == "__main__":
+    if settings.enable_https:
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=settings.port,
+            ssl_keyfile="cert/key.pem",
+            ssl_certfile="cert/cert.pem",
+        )
+    else:
+        uvicorn.run(app, host="0.0.0.0", port=settings.port)

@@ -2,3 +2,9 @@ services:
   yggdrasil:
     image: yggdrasil
     build: .
+    container_name: yggdrasil
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-8000}:8000"

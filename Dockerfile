@@ -1,11 +1,11 @@
-FROM ghcr.io/astral-sh/uv:python3.13-alpine
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
 # Install the project into `/app`
 WORKDIR /app
 
 
-RUN addgroup -g 1000 nonroot \
-    && adduser -u 1000 -G nonroot -D nonroot
+RUN groupadd -g 1000 nonroot \
+    && useradd -u 1000 -g nonroot -m -s /bin/bash nonroot
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
@@ -28,6 +28,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
 COPY . /app
+COPY . /addons
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
@@ -40,4 +42,4 @@ ENTRYPOINT []
 # Use the non-root user to run our application
 USER nonroot
 
-CMD ["uv", "run", "fastapi", "run", "--host", "0.0.0.0", "app/main.py"]
+CMD ["uv", "run", "-m", "app.main"]

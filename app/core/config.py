@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     tmdb_key: str
     proxy_url: str | None = None
     addon_path: str | None = None
+    enable_https: bool | None = False
+    port: int | None = 8000
     model_config = SettingsConfigDict(env_file=".env")
 
 
