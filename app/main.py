@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from importlib.metadata import version
 from .routers import manifest, streams, proxy
 from app.services.addon_engine import AddonEngine
 from app.core.config import get_settings
@@ -9,7 +8,6 @@ from app.core.engines import httpxCrawl
 from asgi_correlation_id import CorrelationIdMiddleware
 import asyncio
 import uvicorn
-
 
 settings = get_settings()
 
@@ -27,10 +25,11 @@ async def lifespan(app: FastAPI):
     print("Servidor finalizado")
 
 
-app = FastAPI(title="Yggdrasil", version=version("yggdrasil"), lifespan=lifespan)
+app = FastAPI(title="Yggdrasil", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -45,8 +44,16 @@ if __name__ == "__main__":
             app,
             host="0.0.0.0",
             port=settings.port,
-            ssl_keyfile="cert/key.pem",
-            ssl_certfile="cert/cert.pem",
+            ssl_keyfile="certs/key.pem",
+            ssl_certfile="certs/cert.pem",
+            proxy_headers=True,
+            forwarded_allow_ips="*",
         )
     else:
-        uvicorn.run(app, host="0.0.0.0", port=settings.port)
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=settings.port,
+            proxy_headers=True,
+            forwarded_allow_ips="*",
+        )
