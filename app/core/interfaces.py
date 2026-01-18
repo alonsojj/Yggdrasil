@@ -13,6 +13,7 @@ class StreamResult(BaseModel):
     proxy: bool = True
     proxy_url: str | None = None
     expires_at: int | None = None
+    behaviorHints: dict = {"notWebReady": False, "proxyHeaders": {}}
 
 
 class SearchResult(BaseModel):

@@ -4,8 +4,30 @@ import httpx
 from typing import AsyncGenerator
 from app.core.security import sign_path, encode_url_path
 from fastapi import Request
+from urllib.parse import urljoin
 
 CHUNK_SIZE = 128 * 1024  # 128Kb
+
+
+def select_best_playlist(content: str, base_url: str) -> str | None:
+    lines = content.splitlines()
+    best_bandwidth = -1
+    best_url = None
+    # TODO: replace this to regex
+    for i, line in enumerate(lines):
+        if line.startswith("#EXT-X-STREAM-INF"):
+            match = re.search(r"BANDWIDTH=(\d+)", line)
+            if match:
+                bandwidth = int(match.group(1))
+                if bandwidth > best_bandwidth:
+                    for j in range(i + 1, len(lines)):
+                        next_line = lines[j].strip()
+                        if next_line and not next_line.startswith("#"):
+                            best_bandwidth = bandwidth
+                            best_url = urljoin(base_url, next_line)
+                            break
+    return best_url
+
 
 def rewrite_hls_playlist(
     content: str, original_headers: dict, base_url: str, hls_map: dict
@@ -31,7 +53,6 @@ def rewrite_hls_playlist(
         if not clean:
             processed_lines.append(line)
             continue
-
         if clean.startswith("#"):
             if "URI=" in clean:
 
@@ -45,14 +66,12 @@ def rewrite_hls_playlist(
             continue
 
         processed_lines.append(make_proxy_url(clean))
-
     return "\n".join(processed_lines)
 
 
 async def stream_generator(
     response: httpx.Response, request: Request
 ) -> AsyncGenerator[bytes, None]:
-    
     try:
         async for chunk in response.aiter_bytes(chunk_size=CHUNK_SIZE):
             if await request.is_disconnected():
