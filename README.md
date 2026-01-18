@@ -78,8 +78,7 @@
 ## Roadmap
 
 - [x] **Core Engine**: Load local addons and serve Stremio manifest.
-- [x] **Docker Support**: Easy deployment via Docker Compose.
-- [ ] **Docker Hub Image**: Publish official image to Docker Hub (easier setup, just configure `.env`).
+- [x] **Docker Support**: Easy deployment via Docker.
 - [ ] **Advanced Proxy Support**: Add option to configure external proxies per addon or globally via UI.
 - [ ] **Addon Management System**:
     - [ ] Install addons via Git URL (cloning directly into `addons/`).
@@ -93,29 +92,67 @@ See the [open issues](https://github.com/alonsojj/Yggdrasil/issues) for a full l
 
 ## Getting Started
 
-Follow these instructions to set up Yggdrasil locally or on a server.
+You can run Yggdrasil using **Docker** (recommended for most users) or **Locally** for development.
 
 ### Prerequisites
 
-Ensure you have the following installed:
+* **Docker Path:** Only [Docker](https://docs.docker.com/engine/install/) is required. (No need for Python or UV).
+* **Local Path:** [UV](https://docs.astral.sh/uv/getting-started/installation/) - Fast Python package manager.
 
-1. **UV** - Fast Python package manager (Recommended)
-   - [**Official Installation Guide**](https://docs.astral.sh/uv/getting-started/installation/)
-   
-   **Windows (PowerShell):**
-   ```powershell
-   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-   ```
-   
-   **Linux/MacOS:**
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
+---
 
-2. **Docker & Docker Compose** (Optional, for containerized deployment)
-   - [Install Docker](https://docs.docker.com/engine/install/)
+### Option 1: Docker
 
-### Installation
+#### 1. Create a configuration file
+Create a `.env` file in your project folder:
+```env
+PORT=8000
+SECRET_KEY=your_super_secret_key_here
+TMDB_KEY=your_tmdb_api_key_here
+ENABLE_HTTPS=False
+```
+
+#### 2. Run the Container
+
+**Using Docker Run**
+```bash
+docker run -d \
+  --name yggdrasil \
+  -p 8000:8000 \
+  --env-file .env \
+  alonsojj/yggdrasil:latest
+```
+
+**Using Docker Compose**
+Download the `docker-compose.yaml` or create one:
+```yaml
+services:
+  yggdrasil:
+    image: alonsojj/yggdrasil:latest
+    container_name: yggdrasil
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${PORT:-8000}:8000"
+    # Uncomment if using self-signed certificates
+    # volumes:
+      # - ./certs:/app/certs
+```
+Then run:
+```bash
+docker-compose up -d
+```
+
+> **⚠️ Note on HTTPS & Self-Signed Certificates:**
+> If you set `ENABLE_HTTPS=True`, you **must** share your certificates with the container by adding a volume:
+> *   **Docker Run:** Add `-v $(pwd)/certs:/app/certs`
+> *   **Docker Compose:** Add `- ./certs:/app/certs` under `volumes`.
+
+---
+
+### Option 2: Local Installation (Manual)
+
+Use this method if you want to develop or run without Docker.
 
 1. **Clone the repository**
    ```bash
@@ -123,38 +160,17 @@ Ensure you have the following installed:
    cd Yggdrasil
    ```
 
-2. **Create virtual environment and install dependencies**
+2. **Setup with UV**
    ```bash
    uv venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   source .venv/bin/activate  # Windows: .venv\Scripts\activate
    uv sync
    ```
 
-3. **Set up environment variables**
+3. **Configure & Run**
    ```bash
    cp .env.example .env
-   ```
-   
-   Edit the `.env` file with your credentials:
-   ```env
-   PORT=8000
-   SECRET_KEY=your_super_secret_key_here
-   TMDB_KEY=your_tmdb_api_key_here
-   ENABLE_HTTPS=False
-   ```
-
-4. **Run with Docker**
-   
-   > **Note:** A pre-built image on Docker Hub is coming soon. For now, build locally:
-
-   ```bash
-   docker-compose up -d --build
-   ```
-
-   OR
-
-   **Run Locally**
-   ```bash
+   # Edit .env with your keys
    uv run -m app.main
    ```
 

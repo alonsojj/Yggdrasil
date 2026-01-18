@@ -8,3 +8,6 @@ services:
       - .env
     ports:
       - "${PORT:-8000}:8000"
+    # Uncomment if using self-signed certificates
+    #volumes:
+      # - ./certs:/app/certs
