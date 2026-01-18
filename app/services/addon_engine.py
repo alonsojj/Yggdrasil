@@ -1,11 +1,10 @@
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import quote
 from app.core.interfaces import YggScraper, StreamResult
 from app.schemas.content import ParsedContent
 import asyncio
 import importlib.util
 import inspect
-import uuid
 
 
 class AddonEngine:
@@ -33,7 +32,6 @@ class AddonEngine:
                                 obj is not YggScraper
                             )  # ignore the import of base class
                         ):
-                            print(obj)
                             self.loaded_addons.append(obj())
 
     async def load(self, addon_directory: str):
@@ -42,7 +40,7 @@ class AddonEngine:
     def _set_proxy(
         self, content: ParsedContent, stream: StreamResult, server_url: str
     ) -> StreamResult:
-        stream.url = f"{server_url}/proxy/stream/{content.id.raw_id}/{stream.stream_id}"
+        stream.url = f"{server_url}/proxy/stream/{quote(content.id.raw_id)}/{quote(stream.stream_id)}"
         self.cached_results[content.id.raw_id][stream.stream_id] = stream
         return stream
 
@@ -52,15 +50,15 @@ class AddonEngine:
         tasks = []
         all_streams = []
         if self.cached_results.get(content.id.raw_id):
-            return list(self.cached_results[content.id.raw_id].values())
+            results = [list(self.cached_results[content.id.raw_id].values())]
         else:
             self.cached_results[content.id.raw_id] = {}
-        for addon in self.loaded_addons:
-            if content.id.prefix in addon.idPrefixies:
-                tasks.append(
-                    asyncio.create_task(addon.get_streams(content, correlation_id))
-                )
-        results = await asyncio.gather(*tasks)
+            for addon in self.loaded_addons:
+                if content.id.prefix in addon.idPrefixies:
+                    tasks.append(
+                        asyncio.create_task(addon.get_streams(content, correlation_id))
+                    )
+            results = await asyncio.gather(*tasks)
         if results:
             for result in results:
                 for stream in result:
@@ -71,5 +69,4 @@ class AddonEngine:
                             )
                         all_streams.append(stream)
 
-        print(all_streams)
         return all_streams
