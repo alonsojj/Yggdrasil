@@ -9,7 +9,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/alonsojj/Yggdrasil">
-    <img src="https://github.com/alonsojj/Yggdrasil/blob/main/images/logo.png?raw=true" alt="drawing" width="200"/>
+    <img src="https://github.com/alonsojj/Yggdrasil/blob/main/app/static/logo.png?raw=true" alt="drawing" width="200"/>
   </a>
 
 <h3 align="center">Yggdrasil</h3>
@@ -54,6 +54,7 @@
     <li><a href="#environment-variables">Environment Variables</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#top-contributors">Top Contributors</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -154,7 +155,7 @@ Ensure you have the following installed:
 
    **Run Locally**
    ```bash
-   fastapi run app/main.py
+   uv run -m app.main
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -253,6 +254,16 @@ Contributions are what make the open source community such an amazing place to l
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+## Acknowledgments
+
+This project was inspired by the features and logic of other amazing projects in the Stremio community. Special thanks to the developers for paving the way:
+
+* [http-stremio](https://github.com/Huuuuuugo/http-stremio)
+* [NuvioStreaming](https://github.com/tapframe/NuvioStreaming)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Contact
 
 Project Link: [https://github.com/alonsojj/Yggdrasil](https://github.com/alonsojj/Yggdrasil)
@@ -277,3 +288,4 @@ Project Link: [https://github.com/alonsojj/Yggdrasil](https://github.com/alonsoj
 [Python-url]: https://www.python.org/
 [Docker-badge]: https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge
 [Docker-url]: https://www.docker.com/
+
