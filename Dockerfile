@@ -1,45 +1,55 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm
+# ==========================================
+# Stage 0: Builder
+# ==========================================
+FROM python:3.11-slim-bookworm AS builder
 
-# Install the project into `/app`
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
 WORKDIR /app
 
 
-RUN groupadd -g 1000 nonroot \
-    && useradd -u 1000 -g nonroot -m -s /bin/bash nonroot
-
-# Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
-
-# Copy from the cache instead of linking since it's a mounted volume
 ENV UV_LINK_MODE=copy
 
-# Omit development dependencies
-ENV UV_NO_DEV=1
-
-# Ensure installed tools can be executed out of the box
-ENV UV_TOOL_BIN_DIR=/usr/local/bin
-
-# Install the project's dependencies using the lockfile and settings
+# 1. Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project
+    uv sync --frozen --no-install-project --no-dev
 
-# Then, add the rest of the project source code and install it
-# Installing separately from its dependencies allows optimal layer caching
+# 2. Copy the code
 COPY . /app
-COPY . /addons
-
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
+    uv sync --frozen --no-dev
 
-# Place executables in the environment at the front of the path
+# ==========================================
+# Stage 1: Final Image
+# ==========================================
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+# CONFIGS
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+# add venv to Python path
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app"
 
-# Reset the entrypoint, don't invoke `uv`
-ENTRYPOINT []
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Use the non-root user to run our application
+# Copy venv and code
+COPY --from=builder /app/.venv /app/.venv
+COPY . /app
+
+
+RUN groupadd -g 1000 nonroot && \
+    useradd -u 1000 -g nonroot -m -s /bin/bash nonroot && \
+    chown -R nonroot:nonroot /app
+
 USER nonroot
 
-CMD ["uv", "run", "-m", "app.main"]
+
+CMD ["python", "-m", "app.main"]

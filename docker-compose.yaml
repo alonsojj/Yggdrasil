@@ -1,6 +1,6 @@
 services:
   yggdrasil:
-    image: yggdrasil
+    image: alonsojj/yggdrasil:latest
     build: .
     container_name: yggdrasil
     restart: unless-stopped
