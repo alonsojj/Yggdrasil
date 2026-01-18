@@ -1,3 +1,6 @@
+from xxlimited import Str
+
+from fastapi import HTTPException
 from app.schemas.content import ParsedContent, ParsedId
 import httpx
 from app.core.config import get_settings
@@ -14,20 +17,25 @@ async def get_info(content: ParsedId):
 
 async def get_imdb_info(content: ParsedId) -> ParsedContent:
     BASE_URL = "https://api.themoviedb.org/3/find"
-
     headers = {"Authorization": f"Bearer {tmdb_key}", "accept": "application/json"}
-
     external_id = content.prefix + content.id
     final_url = (
         f"{BASE_URL}/{external_id}?external_source=imdb_id&language=pt-BR&region=BR"
     )
     response = await client.get(final_url, headers=headers)
 
-    if content.type == "series":
-        data = response.json()["tv_results"][0]
-    else:
-        data = response.json()["movie_results"][0]
-    content_info = ParsedContent(id=content, name=data["name"])
+    json_data = response.json()
+    key = "tv_results" if content.type == "series" else "movie_results"
+    results = json_data.get(key, [])
+    if not results:
+        raise HTTPException(status_code=404, detail="Metadata for the movie not found")
+
+    data = results[0]
+    name = data.get("name") or data.get("title")
+    if not name:
+        raise HTTPException(status_code=404, detail="Name for the movie not found")
+
+    content_info = ParsedContent(id=content, name=name)
     return content_info
 
 
