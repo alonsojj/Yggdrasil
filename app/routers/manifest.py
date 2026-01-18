@@ -9,6 +9,7 @@ async def get_manifest(request: Request):
         "id": "io.yggdrasil",
         "version": request.app.version,
         "name": "Yggdrasil Server",
+        "logo": str(request.base_url) + "static/logo.png",
         "resources": ["catalog", "stream", "meta"],
         "types": ["movie", "series"],
         "catalogs": [

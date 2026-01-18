@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from .routers import manifest, streams, proxy
 from app.services.addon_engine import AddonEngine
@@ -34,6 +35,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(CorrelationIdMiddleware)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(manifest.router)
 app.include_router(streams.router)
 app.include_router(proxy.router)
