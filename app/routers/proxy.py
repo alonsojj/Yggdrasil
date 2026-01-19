@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, HTTPException, Header, Response
 from fastapi.responses import StreamingResponse
 from cachetools import TTLCache
 from app.core.security import decode_url_path, sign_path
+from app.services.realms_engine.storage import RealmsStorage
 from app.utils.hls_utils import (
     select_best_playlist,
     stream_generator,
@@ -52,7 +53,7 @@ async def get_upstream(
 @router.get("/stream/{content_id}/{stream_id}")
 async def proxy_stream_endpoint(content_id: str, stream_id: str, request: Request):
     unquote_id = unquote(content_id)
-    cached_result = request.app.state.realms_engine.cached_results.get(unquote_id)
+    cached_result = RealmsStorage.cached_results.get(unquote_id)
 
     if not cached_result or not (stream := cached_result.get(stream_id)):
         raise HTTPException(status_code=404, detail="Streaming not found")

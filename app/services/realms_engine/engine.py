@@ -1,0 +1,40 @@
+from app.core.interfaces import StreamResult
+from app.schemas.content import ParsedContent
+from .manager import RealmsManager
+from .executor import RealmsExecutor
+from .installer import RealmsInstaller
+from .storage import RealmsStorage
+from urllib.parse import quote
+
+
+class RealmsEngine:
+    def __init__(self, realms_path: str):
+        self.executor = RealmsExecutor()
+        self.installer = RealmsInstaller()
+        self.manager = RealmsManager(realms_path=realms_path)
+        self.manager.load_all()
+
+    def _proxy_streams(self, server_url: str, content_id: str, stream_id: str) -> str:
+        # TODO: add logic to external proxys
+        return f"{server_url}/proxy/stream/{quote(content_id)}/{quote(stream_id)}"
+
+    async def get_streams(
+        self, content: ParsedContent, correlation_id: str, server_url: str
+    ) -> list[StreamResult]:
+        listRealms = self.manager.loaded_realms
+        if RealmsStorage.cached_results.get(content.id.raw_id):
+            print("cacheado")
+            streams = list(RealmsStorage.cached_results.get(content.id.raw_id).values())
+        else:
+            print("scrapers")
+            streams = await self.executor.run_realms(
+                content, correlation_id, listRealms
+            )
+            RealmsStorage.cached_results[content.id.raw_id] = {}
+        for stream in streams:
+            RealmsStorage.cached_results[content.id.raw_id][stream.stream_id] = stream
+            if stream.proxy:
+                stream.url = self._proxy_streams(
+                    server_url, content.id.raw_id, stream.stream_id
+                )
+        return streams

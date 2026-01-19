@@ -17,9 +17,8 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     realms_path = settings.realms_path
     realms_engine = RealmsEngine(realms_path=realms_path)
-    asyncio.create_task(httpxCrawl.run([]))
-    await realms_engine.load_all()
     app.state.realms_engine = realms_engine
+    asyncio.create_task(httpxCrawl.run([]))
 
     yield
     httpxCrawl.stop()
