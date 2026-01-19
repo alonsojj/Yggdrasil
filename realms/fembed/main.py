@@ -7,6 +7,7 @@ import asyncio
 
 
 class Fembed(YggScraper):
+    name = "Fembed"
     idPrefixies = ["tt"]
     BASE_URL = "https://fembed.sx"
     REQUEST_HEADERS = {

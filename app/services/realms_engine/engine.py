@@ -23,10 +23,8 @@ class RealmsEngine:
     ) -> list[StreamResult]:
         listRealms = self.manager.loaded_realms
         if RealmsStorage.cached_results.get(content.id.raw_id):
-            print("cacheado")
             streams = list(RealmsStorage.cached_results.get(content.id.raw_id).values())
         else:
-            print("scrapers")
             streams = await self.executor.run_realms(
                 content, correlation_id, listRealms
             )

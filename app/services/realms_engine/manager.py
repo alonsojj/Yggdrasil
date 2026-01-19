@@ -36,7 +36,7 @@ class RealmsManager:
     def load_all(self):
         self.loaded_realms = []
         for realm_folder in self.realms_path.iterdir():
-            realm = self._load_realm(realm_folder)
+            realm = self.load_realm(realm_folder)
             if realm:
                 self.loaded_realms.append(realm)
 
