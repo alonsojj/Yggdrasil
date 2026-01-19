@@ -2,7 +2,7 @@ from crawlee.crawlers import HttpCrawlingContext
 from crawlee import Request
 from app.core.engines import httpx_router
 from parsel import Selector
-from addons.fembed.utils import decrypt_AEG
+from realms.fembed.utils import decrypt_AEG
 import asyncio
 import json
 

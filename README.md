@@ -61,7 +61,7 @@
 
 ## About The Project
 
-**Yggdrasil** serves as a bridge between your custom Python scrapers and Stremio. Instead of relying on public addons, Yggdrasil runs locally (or on your server), loads your Python scripts from the `addons/` directory, and serves them as a standard Stremio addon manifest.
+**Yggdrasil** serves as a bridge between your custom Python scrapers and Stremio. Instead of relying on public addons, Yggdrasil runs locally (or on your server), loads your Python scripts from the `realms/` directory (these are your scraper addons), and serves them as a standard Stremio addon manifest.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>) </p>
@@ -77,12 +77,12 @@
 
 ## Roadmap
 
-- [x] **Core Engine**: Load local addons and serve Stremio manifest.
+- [x] **Core Engine**: Load local Realms (addons) and serve Stremio manifest.
 - [x] **Docker Support**: Easy deployment via Docker.
-- [ ] **Advanced Proxy Support**: Add option to configure external proxies per addon or globally via UI.
-- [ ] **Addon Management System**:
-    - [ ] Install addons via Git URL (cloning directly into `addons/`).
-    - [ ] Manage installed addons (enable/disable/update).
+- [ ] **Advanced Proxy Support**: Add option to configure external proxies per Realm or globally via UI.
+- [ ] **Realm Management System**:
+    - [ ] Install Realms via Git URL (cloning directly into `realms/`).
+    - [ ] Manage installed Realms (enable/disable/update).
     - [ ] Support for scrapers on external plataforms such as Apify
 - [ ] **User Interface**: A web dashboard to view logs and manage settings.
 
@@ -216,13 +216,13 @@ Once the server is running (default port 8000), you can access the Stremio Manif
 
 ```
 Yggdrasil/
-├── addons/                  # Scraper modules folder
+├── realms/                  # Scraper modules folder (Addons)
 │   └── fembed/              # Example Fembed scraper
 ├── app/
 │   ├── core/                # Core configuration & engines
 │   ├── routers/             # API Endpoints (Manifest, Streams)
 │   ├── schemas/             # Pydantic Models
-│   ├── services/            # Business Logic (Addon Engine)
+│   ├── services/            # Business Logic (Realms Engine)
 │   ├── utils/               # Helpers (HLS, Network)
 │   ├── dependencies.py
 │   └── main.py              # Application Entry Point
@@ -246,7 +246,7 @@ Yggdrasil/
 | `PORT` | Application port | ❌ | `8000` |
 | `ENABLE_HTTPS` | Enable SSL support (Requires certs in `certs/`) | ❌ | `False` |
 | `PROXY_URL` | Global proxy URL for requests | ❌ | `None` |
-| `ADDON_PATH` | Custom path for addons | ❌ | `None` |
+| `REALMS_PATH` | Custom path for realms | ❌ | `None` |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

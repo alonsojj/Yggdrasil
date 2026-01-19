@@ -7,19 +7,19 @@ import importlib.util
 import inspect
 
 
-class AddonEngine:
-    def __init__(self, addon_path: str | None = "addons"):
-        self.addons_path = Path(addon_path or "addons")
-        self.loaded_addons: list[YggScraper] = []
+class RealmsEngine:
+    def __init__(self, realms_path: str | None = "realms"):
+        self.realms_path = Path(realms_path or "realms")
+        self.loaded_realms: list[YggScraper] = []
         self.cached_results: dict[str, dict[str, StreamResult]] = {}
 
     async def load_all(self):
-        for folder in self.addons_path.iterdir():
+        for folder in self.realms_path.iterdir():
             if folder.is_dir():
-                addon_file = Path(f"{folder}/main.py")
-                if addon_file.exists():
+                realm_file = Path(f"{folder}/main.py")
+                if realm_file.exists():
                     spec = importlib.util.spec_from_file_location(
-                        folder.name, addon_file
+                        folder.name, realm_file
                     )
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
@@ -32,9 +32,9 @@ class AddonEngine:
                                 obj is not YggScraper
                             )  # ignore the import of base class
                         ):
-                            self.loaded_addons.append(obj())
+                            self.loaded_realms.append(obj())
 
-    async def load(self, addon_directory: str):
+    async def load(self, realm_directory: str):
         pass
 
     def _set_proxy(
@@ -53,10 +53,10 @@ class AddonEngine:
             results = [list(self.cached_results[content.id.raw_id].values())]
         else:
             self.cached_results[content.id.raw_id] = {}
-            for addon in self.loaded_addons:
-                if content.id.prefix in addon.idPrefixies:
+            for realm in self.loaded_realms:
+                if content.id.prefix in realm.idPrefixies:
                     tasks.append(
-                        asyncio.create_task(addon.get_streams(content, correlation_id))
+                        asyncio.create_task(realm.get_streams(content, correlation_id))
                     )
             results = await asyncio.gather(*tasks)
         if results:

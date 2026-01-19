@@ -1,5 +1,5 @@
 from app.core.interfaces import YggScraper, StreamResult
-from addons.fembed.routers import fembed_storage
+from realms.fembed.routers import fembed_storage
 from app.core.engines import httpxCrawl
 from app.schemas.content import ParsedContent
 from crawlee import Request

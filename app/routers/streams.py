@@ -17,7 +17,7 @@ async def handle_streams(
 ):
     correlation_id = request.headers.get("X-Request-ID")
     server_url = get_server_url(request)
-    result = await request.app.state.addon_engine.get_streams(
+    result = await request.app.state.realms_engine.get_streams(
         content, correlation_id, server_url
     )
     return {"streams": result}

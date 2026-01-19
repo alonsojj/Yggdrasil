@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from .routers import manifest, streams, proxy
-from app.services.addon_engine import AddonEngine
+from app.services.realms_engine import RealmsEngine
 from app.core.config import get_settings
 from app.core.engines import httpxCrawl
 from asgi_correlation_id import CorrelationIdMiddleware
@@ -15,11 +15,11 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    addon_path = settings.addon_path
-    addon_engine = AddonEngine(addon_path=addon_path)
+    realms_path = settings.realms_path
+    realms_engine = RealmsEngine(realms_path=realms_path)
     asyncio.create_task(httpxCrawl.run([]))
-    await addon_engine.load_all()
-    app.state.addon_engine = addon_engine
+    await realms_engine.load_all()
+    app.state.realms_engine = realms_engine
 
     yield
     httpxCrawl.stop()

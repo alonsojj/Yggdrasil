@@ -52,7 +52,7 @@ async def get_upstream(
 @router.get("/stream/{content_id}/{stream_id}")
 async def proxy_stream_endpoint(content_id: str, stream_id: str, request: Request):
     unquote_id = unquote(content_id)
-    cached_result = request.app.state.addon_engine.cached_results.get(unquote_id)
+    cached_result = request.app.state.realms_engine.cached_results.get(unquote_id)
 
     if not cached_result or not (stream := cached_result.get(stream_id)):
         raise HTTPException(status_code=404, detail="Streaming not found")
