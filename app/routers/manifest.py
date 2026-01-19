@@ -1,6 +1,15 @@
 from fastapi import APIRouter, Request
+from starlette.responses import FileResponse
+from pathlib import Path
 
 router = APIRouter(tags=["STREMIO: manifest"])
+
+
+@router.get("/")
+@router.get("/configure")
+async def get_config(request: Request):
+    caminho = Path("app/static/configure.html").resolve()
+    return FileResponse(caminho)
 
 
 @router.get("/manifest.json")

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/logo.png" type="image/x-icon">
+    <title>Yggdrasil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caudex:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #eeeeee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Caudex', serif;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            color: #d4af37;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        h1::after {
+            width: 40px;
+            height: 2px;
+            background-color: #333;
+            margin-bottom: 20px;
+            content: "";
+            display: block;
+            position:relative;
+            left: calc(50% - 20px);
+        }
+
+        .logo-container img {
+            width: 160px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        #button {
+            cursor: pointer;
+            text-decoration: none;
+            background-color: #d4af37;
+            color: #000;
+            padding: 12px 0;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: opacity 0.2s;
+        }
+
+        #button:hover {
+            opacity: 0.9;
+        }
+
+
+    </style>
+</head>
+<body>
+    <main>
+        <h1>YGGDRASIL</h1>
+        
+        <div class="logo-container">
+            <img src="/static/logo.png" alt="Logo">
+        </div>
+
+        <p>Configuration coming soon...</p>
+        
+        <a id="button">Install</a>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById("button");
+            if (btn) {
+                const link = window.location.origin.split("//")[1];
+                btn.setAttribute("href", `stremio://${link}/manifest.json`);
+            }
+        });
+    </script>
+</body>
+</html>
