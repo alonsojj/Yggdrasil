@@ -24,7 +24,10 @@ class SearchResult(BaseModel):
 
 
 class YggScraper(ABC):
+    name: str
     idPrefixies: list[str]
+    id: str | None = None
+    source_path: str | None = None
 
     @abstractmethod
     async def search(query: str) -> List[SearchResult]:
