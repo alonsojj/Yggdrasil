@@ -56,3 +56,6 @@ class Fembed(YggScraper):
 
     async def search(query):
         pass
+
+    async def get_meta(raw_id, correlation_id):
+        return await super().get_meta(correlation_id)
