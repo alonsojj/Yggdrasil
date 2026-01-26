@@ -23,11 +23,11 @@ async def get_manifest(request: Request):
         "types": ["movie", "series"],
         "catalogs": [
             {
-                "id": "ygg_src",
+                "id": "ygg",
                 "type": "movie",
-                "extra": [{"name": "search", "isRequired": "true"}],
+                "extra": [{"name": "search", "isRequired": True}],
                 "name": "Resultados achados pelo Server",
-            }
+            },
         ],
-        "idPrefixes": ["tt", "ygg_src", "kitsu"],
+        "idPrefixes": ["tt", "ygg", "kitsu"],
     }

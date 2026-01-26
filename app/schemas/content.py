@@ -7,18 +7,9 @@ class ParsedId(BaseModel):
     prefix: str
     id: str
     type: Literal["series", "movie"]
+    realm_id: Optional[str] = None
     season: Optional[int] = None
     episode: Optional[int] = None
-
-    @model_validator(mode="after")
-    def validate_fields(self):
-        if self.type == "series":
-            if self.season is None or self.episode is None:
-                ValueError("Series have to be seasons and episode")
-        else:
-            if self.episode is not None or self.season is not None:
-                ValueError("Movies must not have episode and season")
-        return self
 
 
 class ParsedContent(BaseModel):

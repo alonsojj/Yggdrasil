@@ -46,4 +46,9 @@ async def get_kitsu_info(content: ParsedId) -> ParsedContent:
     return content_info
 
 
-PREFIX_HANDLER = {"tt": get_imdb_info, "kitsu": get_kitsu_info}
+async def handler_realm_id(content: ParsedId):
+    content_info = ParsedContent(id=content, name="Unknow")
+    return content_info
+
+
+PREFIX_HANDLER = {"tt": get_imdb_info, "kitsu": get_kitsu_info, "ygg": handler_realm_id}

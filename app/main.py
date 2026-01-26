@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
-from .routers import manifest, streams, proxy
+from .routers import manifest, resources, proxy
 from app.services.realms_engine import RealmsEngine
 from app.core.config import get_settings
 from app.core.engines import httpxCrawl
@@ -36,7 +36,7 @@ app.add_middleware(
 app.add_middleware(CorrelationIdMiddleware)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(manifest.router)
-app.include_router(streams.router)
+app.include_router(resources.router)
 app.include_router(proxy.router)
 
 if __name__ == "__main__":

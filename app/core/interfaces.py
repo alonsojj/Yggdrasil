@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from datetime import datetime
+from pydantic import BaseModel, Field
 from abc import abstractmethod, ABC
-from typing import Literal, List
+from typing import Optional, List
 
 
 class StreamResult(BaseModel):
@@ -16,21 +17,43 @@ class StreamResult(BaseModel):
     behaviorHints: dict = {"notWebReady": False, "proxyHeaders": {}}
 
 
-class SearchResult(BaseModel):
-    type: Literal["movie", "series"]
+class Video(BaseModel):
     id: str
     name: str
-    poster: str | None = None
+    released: str = Field(default_factory=lambda: datetime.now().isoformat() + "Z")
+    season: int
+    episode: int
+    description: Optional[str] = None
+    thumbnail: Optional[str] = None
+
+
+class Meta(BaseModel):
+    id: str
+    name: str
+    type: str
+    poster: Optional[str] = None
+    background: Optional[str] = None
+    logo: Optional[str] = None
+    description: Optional[str] = None
+    releaseInfo: Optional[str] = None
+    videos: Optional[List[Video]] = None
 
 
 class YggScraper(ABC):
     name: str
     idPrefixies: list[str]
-    id: str | None = None
-    source_path: str | None = None
+    searchable: bool = False
+
+    def __init__(self, id: str):
+        self.id = id
+        self.idPrefixies.append(id)
 
     @abstractmethod
-    async def search(query: str) -> List[SearchResult]:
+    async def search(query: str, correlation_id: str) -> List[Meta]:
+        pass
+
+    @abstractmethod
+    async def get_meta(raw_id: str, correlation_id: str) -> Meta:
         pass
 
     @abstractmethod
