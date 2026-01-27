@@ -27,8 +27,7 @@ class RealmsManager:
                         and issubclass(obj, YggScraper)
                         and (obj is not YggScraper)  # ignore the import of base class
                     ):
-                        instance = obj()
-                        instance.id = str(uuid.uuid4())
+                        instance = obj(str(uuid.uuid4()))
                         instance.source_path = str(realm_folder)
                         self.loaded_realms.append(instance)
         return None
